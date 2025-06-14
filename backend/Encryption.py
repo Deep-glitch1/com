@@ -10,7 +10,7 @@ from io import BytesIO
 from PIL import Image
 
 def encrypt_text(plaintext):
-    exe_path = os.path.join(root_path, "dependencies", "AES_Implementation", "build", "encrypt")
+    exe_path = os.path.join(root_path, "dependencies", "AES_Implementation", "build", "Debug", "encrypt.exe")
     try:
         proc = subprocess.Popen(
             [exe_path],
@@ -19,7 +19,8 @@ def encrypt_text(plaintext):
             stderr=subprocess.PIPE,
             text=True
         )
-    except Exception:
+    except Exception as e:
+        print(f"Error accessing encrypt.exe: {str(e)}")
         raise RuntimeError("AES is not built in dependencies. Run CMake first.")
     stdout, stderr = proc.communicate(input=plaintext)
     if proc.returncode != 0: raise RuntimeError(f"Encryption failed: {stderr}")
@@ -29,7 +30,7 @@ def encrypt_text(plaintext):
 
 def decrypt_bytes(byte_values):
     hex_str = ''.join(f'{b:02X}' for b in byte_values)
-    dec_path = os.path.join(root_path, "dependencies", "AES_Implementation", "build", "decrypt")
+    dec_path = os.path.join(root_path, "dependencies", "AES_Implementation", "build", "Debug", "decrypt.exe")
     try:
         proc = subprocess.Popen(
             [dec_path],
@@ -38,7 +39,8 @@ def decrypt_bytes(byte_values):
             stderr=subprocess.PIPE,
             text=True
         )
-    except Exception:
+    except Exception as e:
+        print(f"Error accessing decrypt.exe: {str(e)}")
         raise RuntimeError("AES is not built in dependencies. Run CMake first.")
     stdout, stderr = proc.communicate(input=hex_str + '\n')
     if proc.returncode != 0:
